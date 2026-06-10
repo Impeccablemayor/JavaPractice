@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ChatServer {
 
@@ -27,7 +29,9 @@ public class ChatServer {
         ChatServer chat = new ChatServer(2020);
         System.out.println("Hi, please type a message to send to the client:");
 
-        while (true) {
+        readMessage(chat);
+        writeMessage(chat);
+        /*while (true) {
             //When server receives message from client
             String clientMessage = in.readLine();
             System.out.println("CLIENT>>> " + clientMessage);
@@ -35,15 +39,26 @@ public class ChatServer {
                 closeConnections(chat);
             }
 
-        }
+        }*/
+
+       /* ExecutorService executor = Executors.newFixedThreadPool(5);
+            for (int i = 1; i <= 5; i++) {
+                int taskNumber  = i;
+                    executor.submit(() -> {
+                        System.out.println(taskNumber + "Output" + Thread.currentThread().getName());
+                    });
+                }
+            executor.shutdown();
+        }*/
+
+
     }
 
-    /*private static void readMessage(ChatServer chat) throws IOException {
+    private static void readMessage(ChatServer chat) throws IOException {
         Thread thread = new Thread(() -> {
             new Runnable() {
                 @Override
                 public void run() {
-
                     try {
                         while (true) {
                             //When server receives message from client
@@ -60,7 +75,7 @@ public class ChatServer {
             };
         });
         thread.start();
-    }*/
+    }
 
     private static void writeMessage(ChatServer chat) throws IOException {
         Thread thread = new Thread(() -> {
@@ -78,7 +93,6 @@ public class ChatServer {
         thread.start();
     }
 
-
     public static void closeConnections(ChatServer chatServer) {
         try {
             out.close();
@@ -89,5 +103,4 @@ public class ChatServer {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -22,30 +22,55 @@ public class mayorClient {
         keyboard = new Scanner(System.in);
     }
 
-    public static void main(String[] args) throws IOException {
-        mayorClient client = new mayorClient();
-        while (true) {
-            System.out.println("Enter a message to send to the server.");
+    public static class SenderThread extends Thread{
+        @Override
+        public void run(){
+            while (true) {
+                System.out.println("Enter a message to send to the server.");
+                String message = keyboard.nextLine();
 
-            String message = keyboard.nextLine();
-            if(Objects.equals(message, "End")) {
-                closeConnection();
+                if(Objects.equals(message, "End")) {
+                    try {
+                        closeConnection();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                }
+                if (message != null) {
+                    out.println(message);
+                }
+
+        }
+    }
+
+    public static class ReceiverThread extends Thread{
+            @Override
+            public void run(){
+                while (true) {
+                    String message;
+                    try {
+                        message = in.readLine();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("Message from the server>>>>" + message);
+                }
             }
-            out.write("Client>>>>" + message);
-            out.flush();
+    }
+
+    public static void main(String[] args) throws IOException {
+        mayorClient mayorClient = new mayorClient();
+        SenderThread senderThread = new SenderThread();
+        ReceiverThread receiverThread = new ReceiverThread();
+
+        receiverThread.start();
+        senderThread.start();
         }
 
     }
 
-    public void sendMessage() throws IOException {
 
-    }
-
-    public void receiveMessage() throws IOException {
-        System.out.println("Message received from the server: .");
-         String message = in.readLine();
-        System.out.println("Message from the server>>>>" + message);
-    }
 
     public static void closeConnection() throws IOException {
         out.close();
