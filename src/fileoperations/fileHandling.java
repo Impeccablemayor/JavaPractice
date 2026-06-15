@@ -32,8 +32,6 @@ public class fileHandling {
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
-
-
         }
 
     }
